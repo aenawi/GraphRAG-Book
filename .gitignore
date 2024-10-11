@@ -1,0 +1,5 @@
+.chroma_db/
+ragtest/
+.conda/
+__pycache__/
+.env

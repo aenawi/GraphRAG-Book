@@ -1,0 +1,8 @@
+langchain-community 
+langchain-experimental 
+langchain-openai 
+neo4j 
+graphrag
+streamlit
+llama-index-embeddings-huggingface
+chromadb
