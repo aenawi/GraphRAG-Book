@@ -1,6 +1,6 @@
 # Setup
 
-Need a minimum Neo4j version of 5.15 installed either locally or in the cloud.
+Need a minimum DBMS version of 5.15 installed either locally or in the cloud.
 
 Update the DB_CONFIG in microsoft_to_neo4j.py with your Neo4j details.
 

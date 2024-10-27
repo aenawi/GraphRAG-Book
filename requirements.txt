@@ -4,5 +4,6 @@ langchain-openai
 neo4j 
 graphrag
 streamlit
+llama-index
 llama-index-embeddings-huggingface
 chromadb

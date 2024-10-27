@@ -3,6 +3,9 @@ import time
 from typing import List, Dict
 import pandas as pd
 from neo4j import GraphDatabase
+from neo4j.result import Result
+
+# Database connection
 
 # Database configuration
 DB_CONFIG = {
@@ -12,8 +15,12 @@ DB_CONFIG = {
     "database": "neo4j",
     "index_name": "entity"
 }
-
-
+def db_query(cypher: str, params: Dict = {}) -> pd.DataFrame:
+    """Executes a Cypher statement and returns a DataFrame"""
+    driver = GraphDatabase.driver(DB_CONFIG["url"], auth=(DB_CONFIG["username"], DB_CONFIG["password"]))
+    return driver.execute_query(
+        cypher, parameters_=params, result_transformer_=Result.to_df
+    )
 driver = GraphDatabase.driver(DB_CONFIG["url"], auth=(DB_CONFIG["username"], DB_CONFIG["password"]))
 
 def batched_import(statement: str, df: pd.DataFrame, batch_size: int = 1000) -> int:
@@ -139,6 +146,19 @@ def import_community_reports(graph_folder: str):
     """
     batched_import(community_statement, community_report_df)
 
+def create_vector_index():
+    
+    db_query(
+        """
+    CREATE VECTOR INDEX """
+        + DB_CONFIG["index_name"]
+        + """ IF NOT EXISTS FOR (e:__Entity__) ON e.description_embedding
+    OPTIONS {indexConfig: {
+    `vector.dimensions`: 1536,
+    `vector.similarity_function`: 'cosine'
+    }}
+    """
+)
 def import_microsoft_graph(graph_folder: str):
     """Main function to orchestrate the import process."""
     create_constraints()
@@ -148,3 +168,4 @@ def import_microsoft_graph(graph_folder: str):
     import_relationships(graph_folder)
     import_communities(graph_folder)
     import_community_reports(graph_folder)
+    create_vector_index()

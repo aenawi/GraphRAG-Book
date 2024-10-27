@@ -90,7 +90,7 @@ class GenericVectorStore:
             metadatas=[{"chunk_index": i} for i in range(len(chunks))]
         )
 
-    def query(self, query: str, n_results: int = 5):
+    def query(self, query: str, n_results: int = 8):
         results = self.collection.query(query_texts=[query], n_results=n_results)
         # Prepare the report data from the query results
         report_data = []

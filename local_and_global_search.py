@@ -9,8 +9,8 @@ from langchain_openai import ChatOpenAI
 from langchain_community.vectorstores import Neo4jVector
 from langchain_openai import OpenAIEmbeddings
 from neo4j import GraphDatabase
-from microsoft_to_neo4j import DB_CONFIG
 import asyncio
+from microsoft_to_neo4j import DB_CONFIG, db_query
 
 # Configuration
 TOP_CHUNKS = 3
@@ -19,6 +19,13 @@ TOP_OUTSIDE_RELS = 10
 TOP_INSIDE_RELS = 10
 TOP_ENTITIES = 10
 RESPONSE_TYPE = "multiple paragraphs"
+
+url = DB_CONFIG["url"]
+username = DB_CONFIG["username"]
+password = DB_CONFIG["password"]
+index_name = DB_CONFIG["index_name"]
+
+
 
 # Load environment variables
 def load_env_vars():
@@ -29,18 +36,8 @@ def load_env_vars():
 
 load_env_vars()
 
-# Database connection
-url = DB_CONFIG["url"]
-username = DB_CONFIG["username"]
-password = DB_CONFIG["password"]
-index_name = DB_CONFIG["index_name"]
 
-def db_query(cypher: str, params: Dict = {}) -> pd.DataFrame:
-    """Executes a Cypher statement and returns a DataFrame"""
-    driver = GraphDatabase.driver(url, auth=(username, password))
-    return driver.execute_query(
-        cypher, parameters_=params, result_transformer_=Result.to_df
-    )
+
 
 # Vector store setup
 lc_retrieval_query = """
